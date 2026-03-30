@@ -942,6 +942,7 @@ pub fn can_be_liquidated(calculation: &SimplifiedMarginCalculation) -> bool {
 
 #[cfg(test)]
 mod tests {
+    use anchor_lang::solana_program::pubkey::Pubkey;
     use drift_program::{
         math::constants::{
             AMM_RESERVE_PRECISION, BASE_PRECISION_I64, MAX_CONCENTRATION_COEFFICIENT,
@@ -954,7 +955,6 @@ mod tests {
             spot_market::{AssetTier, SpotBalanceType, SpotMarket},
         },
     };
-    use anchor_lang::solana_program::pubkey::Pubkey;
 
     use super::*;
 

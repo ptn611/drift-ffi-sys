@@ -9,11 +9,7 @@ use abi_stable::std_types::{
 };
 use anchor_lang::{
     prelude::{AccountInfo, AccountLoader},
-    solana_program::{
-        account_info::IntoAccountInfo,
-        clock::Clock,
-        pubkey::Pubkey,
-    },
+    solana_program::{account_info::IntoAccountInfo, clock::Clock, pubkey::Pubkey},
 };
 use drift_program::{
     controller::{position::PositionDirection, repeg::_update_amm},

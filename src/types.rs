@@ -2,6 +2,10 @@
 use std::collections::HashMap;
 
 use abi_stable::std_types::RResult;
+use anchor_lang::solana_program::{
+    account_info::{Account as _, AccountInfo, IntoAccountInfo},
+    pubkey::Pubkey,
+};
 use drift_program::{
     controller::position::PositionDirection,
     math::{margin::MarginRequirementType, oracle::OracleValidity},
@@ -14,10 +18,6 @@ use drift_program::{
         state::OracleGuardRails,
         user::{MarketType, OrderTriggerCondition, OrderType},
     },
-};
-use anchor_lang::solana_program::{
-    account_info::{Account as _, AccountInfo, IntoAccountInfo},
-    pubkey::Pubkey,
 };
 use fxhash::FxBuildHasher;
 
