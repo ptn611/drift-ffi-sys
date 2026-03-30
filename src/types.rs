@@ -15,13 +15,13 @@ use drift_program::{
         user::{MarketType, OrderTriggerCondition, OrderType},
     },
 };
-use fxhash::FxBuildHasher;
-use solana_sdk::{
-    account::Account,
+use anchor_lang::solana_program::{
     account_info::{Account as _, AccountInfo, IntoAccountInfo},
-    clock::Slot,
     pubkey::Pubkey,
 };
+use fxhash::FxBuildHasher;
+
+use crate::shims::{Account, Slot};
 
 #[repr(C)]
 #[derive(Debug)]

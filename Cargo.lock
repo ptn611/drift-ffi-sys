@@ -1059,7 +1059,6 @@ dependencies = [
  "anchor-lang",
  "drift",
  "fxhash",
- "solana-sdk",
 ]
 
 [[package]]

@@ -954,7 +954,7 @@ mod tests {
             spot_market::{AssetTier, SpotBalanceType, SpotMarket},
         },
     };
-    use solana_sdk::pubkey::Pubkey;
+    use anchor_lang::solana_program::pubkey::Pubkey;
 
     use super::*;
 

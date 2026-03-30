@@ -14,4 +14,3 @@ drift-program = { package = "drift", git = "https://github.com/drift-labs/protoc
     "mainnet-beta", "drift-rs"
 ] }
 fxhash = "0.2.1"
-solana-sdk = { version = "1.16.*" }

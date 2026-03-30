@@ -7,7 +7,14 @@ use abi_stable::std_types::{
     ROption,
     RResult::{RErr, ROk},
 };
-use anchor_lang::prelude::{AccountInfo, AccountLoader};
+use anchor_lang::{
+    prelude::{AccountInfo, AccountLoader},
+    solana_program::{
+        account_info::IntoAccountInfo,
+        clock::Clock,
+        pubkey::Pubkey,
+    },
+};
 use drift_program::{
     controller::{position::PositionDirection, repeg::_update_amm},
     math::{self, amm::calculate_amm_available_liquidity, margin::MarginRequirementType},
@@ -25,12 +32,8 @@ use drift_program::{
         user::{Order, PerpPosition, SpotPosition, User},
     },
 };
-use solana_sdk::{
-    account::Account,
-    account_info::IntoAccountInfo,
-    clock::{Clock, Slot},
-    pubkey::Pubkey,
-};
+
+use crate::shims::{Account, Slot};
 
 use crate::{
     margin::IncrementalMarginCalculation,
