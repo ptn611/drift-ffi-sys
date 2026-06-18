@@ -51,7 +51,7 @@ jobs:
       # For workflow_run trigger without a tag: checkout master to read version
       - name: Check out (workflow_run)
         if: github.event_name != 'push'
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           ref: master
 
@@ -68,7 +68,7 @@ jobs:
       # For tag push trigger: checkout the tagged commit
       - name: Check out (tag push)
         if: github.event_name == 'push'
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           ref: ${{ github.ref }}
 
@@ -88,7 +88,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           ref: ${{ needs.create-release-preflight.outputs.tag_name }}
 
@@ -99,7 +99,7 @@ jobs:
       - name: Build Linux
         run: |
           cargo build --release
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           path: "target/release/libdrift_ffi_sys.so"
           name: libdrift_ffi_sys.so
@@ -110,7 +110,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           ref: ${{ needs.create-release-preflight.outputs.tag_name }}
 
@@ -122,7 +122,7 @@ jobs:
       - name: Build Mac
         run: |
           cargo build --release --target x86_64-apple-darwin
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           path: "target/x86_64-apple-darwin/release/libdrift_ffi_sys.dylib"
           name: libdrift_ffi_sys.dylib
@@ -134,15 +134,15 @@ jobs:
       contents: write
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           ref: ${{ needs.create-release-preflight.outputs.tag_name }}
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
         with:
           name: ${{ needs.create-release-preflight.outputs.release_name }}
           files: |
