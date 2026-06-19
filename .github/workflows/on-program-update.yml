@@ -32,7 +32,7 @@ jobs:
       contents: write
     steps:
     - name: Checkout master (v2)
-      uses: actions/checkout@v4
+      uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       with:
         ref: master
 
@@ -89,7 +89,7 @@ jobs:
       contents: write
     steps:
     - name: Checkout v1 branch
-      uses: actions/checkout@v4
+      uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       with:
         ref: v1
 
