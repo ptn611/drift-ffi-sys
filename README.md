@@ -12,7 +12,7 @@ Goals:
 
 ### Prebuilt
 
-Download latest [release libs](https://github.com/drift-labs/drift-ffi-sys/releases), unzip and link/copy to `/usr/lib` (linux) or `/usr/local/lib` (mac)
+Download latest [release libs](https://github.com/velocity-exchange/drift-ffi-sys/releases), unzip and link/copy to `/usr/lib` (linux) or `/usr/local/lib` (mac)
 
 ### from Source
 ```shell
@@ -38,7 +38,7 @@ CI job does this automatically but occasionally fails due to breaking changes.
 2) update `tag = "v2.140.0"` to the latest version in `Cargo.toml`
 
 ```Cargo.toml
-drift-program = { package = "drift", git = "https://github.com/drift-labs/protocol-v2.git", tag = "v2.140.0", features = [
+drift-program = { package = "drift", git = "https://github.com/velocity-exchange/protocol-v2.git", tag = "v2.140.0", features = [
     "mainnet-beta", "drift-rs"
 ] }
 ```

@@ -13,5 +13,5 @@ jobs:
         -H "Accept: application/vnd.github+json" \
         -H "Authorization: token ${{ secrets.GH_PAT }}" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
-        https://api.github.com/repos/drift-labs/drift-ffi-sys/dispatches \
+        https://api.github.com/repos/velocity-exchange/drift-ffi-sys/dispatches \
         -d '{"event_type":"sdk-update","client_payload":{"version":"latest"}}'
