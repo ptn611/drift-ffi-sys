@@ -7,7 +7,7 @@ use drift_program::{
             MARGIN_PRECISION_I128, MARGIN_PRECISION_U128, OPEN_ORDER_MARGIN_REQUIREMENT,
             QUOTE_SPOT_MARKET_INDEX,
         },
-        margin::{calculate_perp_position_value_and_pnl, MarginRequirementType},
+        margin::{MarginRequirementType, calculate_perp_position_value_and_pnl},
         spot_balance::{get_strict_token_value, get_token_amount},
     },
     state::{
@@ -23,7 +23,7 @@ use drift_program::{
 use crate::types::MarketState;
 
 #[derive(Clone, Copy, Debug, Default)]
-pub(crate) struct IsolatedMarginCalculation {
+pub struct IsolatedMarginCalculation {
     pub margin_requirement: u128,
     pub total_collateral: i128,
     pub total_collateral_buffer: i128,
@@ -83,7 +83,7 @@ impl Into<crate::types::SimplifiedMarginCalculation> for SimplifiedMarginCalcula
 
 // Core margin calculation result
 #[derive(Debug, Clone)]
-pub(crate) struct SimplifiedMarginCalculation {
+pub struct SimplifiedMarginCalculation {
     pub total_collateral: i128,
     pub total_collateral_buffer: i128,
     pub margin_requirement: u128,
@@ -951,7 +951,7 @@ mod tests {
         },
         state::{
             oracle::{HistoricalOracleData, OraclePriceData, OracleSource},
-            perp_market::{ContractType, MarketStatus, PerpMarket, AMM},
+            perp_market::{AMM, ContractType, MarketStatus, PerpMarket},
             spot_market::{AssetTier, SpotBalanceType, SpotMarket},
         },
     };

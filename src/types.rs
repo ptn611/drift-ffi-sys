@@ -47,9 +47,14 @@ impl From<AccountWithKey> for (Pubkey, Account) {
 
 impl<'a> IntoAccountInfo<'a> for &'a mut AccountWithKey {
     fn into_account_info(self) -> AccountInfo<'a> {
-        let (lamports, data, owner, executable, rent_epoch) = self.account.get();
         AccountInfo::new(
-            &self.key, false, false, lamports, data, owner, executable, rent_epoch,
+            &self.key,
+            false,
+            false,
+            &mut self.account.lamports,
+            &mut self.account.data,
+            &self.account.owner,
+            self.account.executable,
         )
     }
 }

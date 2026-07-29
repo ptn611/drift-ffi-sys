@@ -10,9 +10,7 @@
 //! compiled with different toolchains).
 
 use anchor_lang::solana_program::{
-    account_info::{Account as AccountTrait, AccountInfo, IntoAccountInfo},
-    clock::Epoch,
-    pubkey::Pubkey,
+    account_info::Account as AccountTrait, clock::Epoch, pubkey::Pubkey,
 };
 
 /// Client-side account representation.
@@ -34,19 +32,14 @@ pub struct Account {
     pub rent_epoch: Epoch,
 }
 
-/// Implements solana-program's `Account` trait so that the blanket
-/// `IntoAccountInfo for &mut (Pubkey, Account)` impl works automatically.
 impl AccountTrait for Account {
-    fn get(&mut self) -> (&mut u64, &mut [u8], &Pubkey, bool, Epoch) {
+    fn get(&mut self) -> (&mut u64, &mut [u8], &Pubkey, bool) {
         (
             &mut self.lamports,
             &mut self.data,
             &self.owner,
             self.executable,
-            self.rent_epoch,
         )
     }
 }
-
-/// Convenience alias — `Slot` is always `u64`.
 pub type Slot = u64;

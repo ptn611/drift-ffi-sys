@@ -15,10 +15,10 @@ use drift_program::{
     controller::{position::PositionDirection, repeg::_update_amm},
     math::{self, amm::calculate_amm_available_liquidity, margin::MarginRequirementType},
     state::{
-        oracle::{get_oracle_price as get_oracle_price_, OraclePriceData, OracleSource},
+        oracle::{OraclePriceData, OracleSource, get_oracle_price as get_oracle_price_},
         oracle_map::OracleMap,
         order_params::PlaceOrderOptions,
-        perp_market::{ContractType, PerpMarket, AMM},
+        perp_market::{AMM, ContractType, PerpMarket},
         perp_market_map::PerpMarketMap,
         protected_maker_mode_config::ProtectedMakerParams,
         revenue_share::RevenueShareOrder,
@@ -34,19 +34,19 @@ use crate::shims::{Account, Slot};
 use crate::{
     margin::IncrementalMarginCalculation,
     types::{
-        compat::{self},
         AccountsList, FfiResult, IsolatedMarginCalculation, MMOraclePriceData, MarginCalculation,
         MarginContextMode, MarketState,
+        compat::{self},
     },
 };
 
 /// Return the FFI crate version
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn ffi_version() -> String {
     env!("CARGO_PKG_VERSION").to_string()
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn oracle_get_oracle_price(
     oracle_source: OracleSource,
     price_oracle: &mut (Pubkey, Account),
@@ -62,7 +62,7 @@ pub extern "C" fn oracle_get_oracle_price(
     )
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn math_calculate_auction_price(
     order: &Order,
     slot: Slot,
@@ -79,7 +79,7 @@ pub extern "C" fn math_calculate_auction_price(
     ))
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn math_calculate_margin_requirement_and_total_collateral_and_liability_info(
     user: &User,
     accounts: &mut AccountsList,
@@ -148,7 +148,7 @@ pub extern "C" fn math_calculate_margin_requirement_and_total_collateral_and_lia
     to_ffi_result(m)
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn math_calculate_net_user_pnl(
     amm: &AMM,
     oracle_price: i64,
@@ -158,7 +158,7 @@ pub extern "C" fn math_calculate_net_user_pnl(
     )
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn simulate_update_amm(
     market: &mut PerpMarket,
     state: &State,
@@ -178,7 +178,7 @@ pub extern "C" fn simulate_update_amm(
     )
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn math_calculate_base_asset_amount_for_amm_to_fulfill(
     order: &Order,
     market: &PerpMarket,
@@ -198,7 +198,7 @@ pub extern "C" fn math_calculate_base_asset_amount_for_amm_to_fulfill(
     to_ffi_result(res)
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn orders_place_perp_order<'a>(
     user: &User,
     state: &State,
@@ -266,7 +266,7 @@ pub extern "C" fn orders_place_perp_order<'a>(
     to_ffi_result(res.map(|_| true))
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn order_calculate_auction_params_for_trigger_order(
     order: &Order,
     oracle_price: &OraclePriceData,
@@ -282,12 +282,12 @@ pub extern "C" fn order_calculate_auction_params_for_trigger_order(
     )
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn order_is_limit_order(order: &Order) -> bool {
     order.is_limit_order()
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn order_get_limit_price(
     order: &Order,
     valid_oracle_price: Option<i64>,
@@ -307,12 +307,12 @@ pub extern "C" fn order_get_limit_price(
     ))
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn order_is_resting_limit_order(order: &Order, slot: u64) -> FfiResult<bool> {
     to_ffi_result(order.is_resting_limit_order(slot))
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn order_params_will_auction_params_sanitize(
     order_params: &crate::types::OrderParams,
     perp_market: &PerpMarket,
@@ -323,7 +323,7 @@ pub extern "C" fn order_params_will_auction_params_sanitize(
     to_ffi_result(order_params.update_perp_auction_params(perp_market, oracle_price, is_signed_msg))
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn order_params_update_perp_auction_params(
     order_params: &mut crate::types::OrderParams,
     perp_market: &PerpMarket,
@@ -333,23 +333,25 @@ pub extern "C" fn order_params_update_perp_auction_params(
     // Convert to program type, update, then write back into the caller's struct
     let mut order_params_2: drift_program::state::order_params::OrderParams =
         (order_params as &crate::types::OrderParams).into();
-    order_params_2.update_perp_auction_params(perp_market, oracle_price, is_signed_msg);
+    order_params_2
+        .update_perp_auction_params(perp_market, oracle_price, is_signed_msg)
+        .ok();
     *order_params = (&order_params_2).into();
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn perp_market_get_protected_maker_params(
     market: &PerpMarket,
 ) -> ProtectedMakerParams {
     market.get_protected_maker_params()
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn order_triggered(order: &Order) -> bool {
     order.triggered()
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn perp_market_get_margin_ratio(
     market: &PerpMarket,
     size: compat::u128,
@@ -359,12 +361,12 @@ pub extern "C" fn perp_market_get_margin_ratio(
     to_ffi_result(market.get_margin_ratio(size.0, margin_type, high_leverage_mode))
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn perp_market_get_open_interest(market: &PerpMarket) -> compat::u128 {
     market.get_open_interest().into()
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn perp_market_get_mm_oracle_price_data(
     market: &PerpMarket,
     oracle_price_data: OraclePriceData,
@@ -386,7 +388,7 @@ pub extern "C" fn perp_market_get_mm_oracle_price_data(
     )
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn perp_market_get_trigger_price(
     market: &PerpMarket,
     oracle_price: i64,
@@ -396,7 +398,7 @@ pub extern "C" fn perp_market_get_trigger_price(
     to_ffi_result(market.get_trigger_price(oracle_price, now, use_median_price))
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn perp_market_get_fallback_price(
     market: &PerpMarket,
     direction: PositionDirection,
@@ -414,7 +416,7 @@ pub extern "C" fn perp_market_get_fallback_price(
     to_ffi_result(res)
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn perp_position_get_unrealized_pnl(
     position: &PerpPosition,
     oracle_price: i64,
@@ -422,7 +424,7 @@ pub extern "C" fn perp_position_get_unrealized_pnl(
     to_ffi_result(position.get_unrealized_pnl(oracle_price).map(compat::i128))
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn perp_position_get_claimable_pnl(
     position: &PerpPosition,
     oracle_price: i64,
@@ -435,17 +437,17 @@ pub extern "C" fn perp_position_get_claimable_pnl(
     )
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn perp_position_is_available(position: &PerpPosition) -> bool {
     position.is_available()
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn perp_position_is_open_position(position: &PerpPosition) -> bool {
     position.is_open_position()
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn perp_position_worst_case_base_asset_amount(
     position: &PerpPosition,
     oracle_price: i64,
@@ -455,7 +457,7 @@ pub extern "C" fn perp_position_worst_case_base_asset_amount(
     to_ffi_result(res.map(compat::i128))
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn spot_market_get_asset_weight(
     market: &SpotMarket,
     size: compat::u128,
@@ -465,7 +467,7 @@ pub extern "C" fn spot_market_get_asset_weight(
     to_ffi_result(market.get_asset_weight(size.0, oracle_price, &margin_requirement_type))
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn spot_market_get_liability_weight(
     market: &SpotMarket,
     size: compat::u128,
@@ -474,7 +476,7 @@ pub extern "C" fn spot_market_get_liability_weight(
     to_ffi_result(market.get_liability_weight(size.0, &margin_requirement_type))
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn spot_market_get_margin_ratio(
     market: &SpotMarket,
     margin_type: MarginRequirementType,
@@ -482,12 +484,12 @@ pub extern "C" fn spot_market_get_margin_ratio(
     to_ffi_result(market.get_margin_ratio(&margin_type))
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn spot_position_is_available(position: &SpotPosition) -> bool {
     position.is_available()
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn spot_position_get_signed_token_amount(
     position: &SpotPosition,
     market: &SpotMarket,
@@ -495,7 +497,7 @@ pub extern "C" fn spot_position_get_signed_token_amount(
     to_ffi_result(position.get_signed_token_amount(market).map(compat::i128))
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn spot_position_get_token_amount(
     position: &SpotPosition,
     market: &SpotMarket,
@@ -503,7 +505,7 @@ pub extern "C" fn spot_position_get_token_amount(
     to_ffi_result(position.get_token_amount(market).map(compat::u128))
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn spot_balance_get_token_amount(
     balance: compat::u128,
     spot_market: &SpotMarket,
@@ -515,7 +517,7 @@ pub extern "C" fn spot_balance_get_token_amount(
     )
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn user_get_spot_position(
     user: &User,
     market_index: u16,
@@ -523,7 +525,7 @@ pub extern "C" fn user_get_spot_position(
     to_ffi_result(user.get_spot_position(market_index))
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn user_get_perp_position(
     user: &User,
     market_index: u16,
@@ -531,7 +533,7 @@ pub extern "C" fn user_get_perp_position(
     to_ffi_result(user.get_perp_position(market_index))
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn user_update_perp_position_max_margin_ratio(
     user: &mut User,
     market_index: u16,
@@ -540,7 +542,7 @@ pub extern "C" fn user_update_perp_position_max_margin_ratio(
     to_ffi_result(user.update_perp_position_max_margin_ratio(market_index, margin_ratio))
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn margin_calculate_simplified_margin_requirement(
     user: &User,
     market_state: &MarketState,
@@ -557,7 +559,7 @@ pub extern "C" fn margin_calculate_simplified_margin_requirement(
     to_ffi_result(result.map(Into::into))
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn incremental_margin_calculation_from_user(
     user: &User,
     market_state: &MarketState,
@@ -574,7 +576,7 @@ pub extern "C" fn incremental_margin_calculation_from_user(
     )
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn incremental_margin_calculation_update_spot_position(
     this: &mut IncrementalMarginCalculation,
     spot_position: &SpotPosition,
@@ -584,7 +586,7 @@ pub extern "C" fn incremental_margin_calculation_update_spot_position(
     this.update_spot_position(spot_position, market_state, timestamp);
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn incremental_margin_calculation_update_perp_position(
     this: &mut IncrementalMarginCalculation,
     perp_position: &PerpPosition,
